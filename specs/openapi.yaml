@@ -1,0 +1,157 @@
+openapi: 3.0.1
+info:
+  title: Шлюз курсов валют Банка России
+  description: 'Официальные курсы иностранных валют к рублю, устанавливаемые Банком России (источник — cbr.ru).'
+  version: '1.0'
+paths:
+  /api/v1/currency-rates:
+    get:
+      tags:
+        - CurrencyRates
+      summary: Курсы валют на дату.
+      description: 'Если на дату ЦБ курс не устанавливал (выходной, праздник), возвращается последний действующий курс; дата его установления — в поле `rateDate`.'
+      parameters:
+        - name: date
+          in: query
+          description: Дата курса в формате yyyy-MM-dd; по умолчанию — сегодня по московскому времени.
+          schema:
+            type: string
+            format: date
+          example: '2026-10-01'
+        - name: code
+          in: query
+          description: Буквенный код валюты ISO 4217 (регистр не важен); по умолчанию — все валюты.
+          schema:
+            pattern: '^[A-Za-z]{3}$'
+            type: string
+          example: USD
+      responses:
+        '200':
+          description: Курсы найдены.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CurrencyRatesResponse'
+        '204':
+          description: Валюты с указанным кодом нет в данных ЦБ на дату.
+        '400':
+          description: Некорректные параметры запроса.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+        '502':
+          description: Источник данных ЦБ недоступен или вернул некорректные данные.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '504':
+          description: Источник данных ЦБ не ответил за отведённое время.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+components:
+  schemas:
+    CurrencyRateDto:
+      required:
+        - charCode
+        - name
+        - nominal
+        - numCode
+        - unitRate
+        - value
+      type: object
+      properties:
+        charCode:
+          type: string
+          description: Буквенный код ISO 4217.
+        numCode:
+          type: string
+          description: Цифровой код ISO 4217.
+        name:
+          type: string
+          description: Наименование валюты.
+        nominal:
+          type: integer
+          description: 'Количество единиц валюты, за которое установлен курс.'
+          format: int32
+        value:
+          type: number
+          description: 'Курс за номинал, руб.'
+        unitRate:
+          type: number
+          description: 'Курс за одну единицу валюты, руб.'
+      additionalProperties: false
+      description: Курс одной валюты.
+    CurrencyRatesResponse:
+      required:
+        - rateDate
+        - rates
+        - requestedDate
+      type: object
+      properties:
+        requestedDate:
+          type: string
+          description: Запрошенная дата.
+          format: date
+        rateDate:
+          type: string
+          description: Фактическая дата установления курсов Банком России.
+          format: date
+        rates:
+          type: array
+          items:
+            $ref: '#/components/schemas/CurrencyRateDto'
+          description: Курсы валют.
+      additionalProperties: false
+      description: Курсы валют на дату.
+    ProblemDetails:
+      type: object
+      properties:
+        type:
+          type: string
+          nullable: true
+        title:
+          type: string
+          nullable: true
+        status:
+          type: integer
+          format: int32
+          nullable: true
+        detail:
+          type: string
+          nullable: true
+        instance:
+          type: string
+          nullable: true
+      additionalProperties: { }
+    ValidationProblemDetails:
+      required:
+        - errors
+      type: object
+      properties:
+        type:
+          type: string
+          nullable: true
+        title:
+          type: string
+          nullable: true
+        status:
+          type: integer
+          format: int32
+          nullable: true
+        detail:
+          type: string
+          nullable: true
+        instance:
+          type: string
+          nullable: true
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+      additionalProperties: { }

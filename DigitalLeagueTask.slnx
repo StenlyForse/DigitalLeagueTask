@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="DigitalLeagueTask/DigitalLeagueTask.csproj" />
+  <Project Path="DigitalLeagueTask.Tests/DigitalLeagueTask.Tests.csproj" />
+</Solution>

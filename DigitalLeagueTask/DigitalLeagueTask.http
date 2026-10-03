@@ -1,0 +1,26 @@
+@DigitalLeagueTask_HostAddress = http://localhost:5120
+
+### Курсы всех валют на сегодня (МСК)
+GET {{DigitalLeagueTask_HostAddress}}/api/v1/currency-rates
+Accept: application/json
+
+### Курсы всех валют на дату
+GET {{DigitalLeagueTask_HostAddress}}/api/v1/currency-rates?date=2026-10-01
+Accept: application/json
+
+### Курс одной валюты на дату
+GET {{DigitalLeagueTask_HostAddress}}/api/v1/currency-rates?date=2026-10-01&code=usd
+Accept: application/json
+
+### Выходной: фактическая дата курса отличается от запрошенной
+GET {{DigitalLeagueTask_HostAddress}}/api/v1/currency-rates?date=2026-09-27&code=JPY
+Accept: application/json
+
+### Валюты нет в данных ЦБ → 204
+GET {{DigitalLeagueTask_HostAddress}}/api/v1/currency-rates?code=XAU
+
+### Некорректные параметры → 400
+GET {{DigitalLeagueTask_HostAddress}}/api/v1/currency-rates?date=01.10.2026&code=US
+
+### Health check
+GET {{DigitalLeagueTask_HostAddress}}/health

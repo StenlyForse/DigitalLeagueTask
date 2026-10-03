@@ -1,0 +1,21 @@
+# Сборка
+[Bb]in/
+[Oo]bj/
+[Tt]est[Rr]esults/
+*.trx
+
+# IDE
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.rsuser
+
+# Локальные кэши (Jenkins кладёт пакеты NuGet в workspace)
+.nuget/
+.dotnet/
+
+# ОС
+Thumbs.db
+.DS_Store

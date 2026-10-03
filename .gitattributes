@@ -1,0 +1,13 @@
+# Текстовые файлы хранятся в репозитории с LF; в рабочей копии — по настройкам ОС.
+* text=auto
+
+# Выполняются в Linux (Docker, Jenkins-агент) — всегда LF.
+Dockerfile text eol=lf
+Jenkinsfile text eol=lf
+*.sh text eol=lf
+
+# Сгенерированный OpenAPI сравнивается тестом побайтно по строкам — LF на всех ОС.
+specs/openapi.yaml text eol=lf
+
+# Реальные ответы ЦБ в windows-1251 — хранятся как есть, без преобразований.
+DigitalLeagueTask.Tests/TestData/*.xml binary
